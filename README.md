@@ -1,176 +1,269 @@
-# Airflow
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
 
-[![PyPI version](https://badge.fury.io/py/airflow.svg)](https://badge.fury.io/py/airflow)
-[![Build Status](https://travis-ci.org/apache/incubator-airflow.svg)](https://travis-ci.org/apache/incubator-airflow)
-[![Coverage Status](https://img.shields.io/codecov/c/github/apache/incubator-airflow/master.svg)](https://codecov.io/github/apache/incubator-airflow?branch=master)
-[![Code Health](https://landscape.io/github/apache/incubator-airflow/master/landscape.svg?style=flat)](https://landscape.io/github/apache/incubator-airflow/master)
-[![Requirements Status](https://requires.io/github/apache/incubator-airflow/requirements.svg?branch=master)](https://requires.io/github/apache/incubator-airflow/requirements/?branch=master)
-[![Documentation](https://img.shields.io/badge/docs-pythonhosted-blue.svg)](http://pythonhosted.org/airflow/)
-[![Join the chat at https://gitter.im/apache/incubator-airflow](https://badges.gitter.im/apache/incubator-airflow.svg)](https://gitter.im/apache/incubator-airflow?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+   http://www.apache.org/licenses/LICENSE-2.0
 
-Airflow is a platform to programmatically author, schedule and monitor
-workflows.
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+-->
 
-When workflows are defined as code, they become more maintainable,
-versionable, testable, and collaborative.
+# Apache Airflow
 
-Use Airflow to author workflows as directed acyclic graphs (DAGs) of tasks.
-The Airflow scheduler executes your tasks on an array of workers while
-following the specified dependencies. Rich command line utilities make
-performing complex surgeries on DAGs a snap. The rich user interface
-makes it easy to visualize pipelines running in production,
-monitor progress, and troubleshoot issues when needed.
+[![PyPI version](https://badge.fury.io/py/apache-airflow.svg)](https://badge.fury.io/py/apache-airflow)
+[![GitHub Build](https://github.com/apache/airflow/workflows/CI%20Build/badge.svg)](https://github.com/apache/airflow/actions)
+[![Coverage Status](https://img.shields.io/codecov/c/github/apache/airflow/master.svg)](https://codecov.io/github/apache/airflow?branch=master)
+[![License](http://img.shields.io/:license-Apache%202-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.txt)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/apache-airflow.svg)](https://pypi.org/project/apache-airflow/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/apache/airflow.svg)](https://hub.docker.com/r/apache/airflow)
+[![Docker Stars](https://img.shields.io/docker/stars/apache/airflow.svg)](https://hub.docker.com/r/apache/airflow)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/apache-airflow)](https://pypi.org/project/apache-airflow/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Twitter Follow](https://img.shields.io/twitter/follow/ApacheAirflow.svg?style=social&label=Follow)](https://twitter.com/ApacheAirflow)
+[![Slack Status](https://img.shields.io/badge/slack-join_chat-white.svg?logo=slack&style=social)](https://s.apache.org/airflow-slack)
 
-## Getting started
-Please visit the Airflow Platform documentation for help with [installing Airflow](http://pythonhosted.org/airflow/installation.html), getting a [quick start](http://pythonhosted.org/airflow/start.html), or a more complete [tutorial](http://pythonhosted.org/airflow/tutorial.html).
+[Apache Airflow](https://airflow.apache.org/docs/stable/) (or simply Airflow) is a platform to programmatically author, schedule, and monitor workflows.
 
-For further information, please visit the [Airflow Wiki](https://cwiki.apache.org/confluence/display/AIRFLOW/Airflow+Home).
+When workflows are defined as code, they become more maintainable, versionable, testable, and collaborative.
 
-## Beyond the Horizon
+Use Airflow to author workflows as directed acyclic graphs (DAGs) of tasks. The Airflow scheduler executes your tasks on an array of workers while following the specified dependencies. Rich command line utilities make performing complex surgeries on DAGs a snap. The rich user interface makes it easy to visualize pipelines running in production, monitor progress, and troubleshoot issues when needed.
 
-Airflow **is not** a data streaming solution. Tasks do not move data from
-one to the other (though tasks can exchange metadata!). Airflow is not
-in the [Spark Streaming](http://spark.apache.org/streaming/)
-or [Storm](https://storm.apache.org/) space, it is more comparable to
-[Oozie](http://oozie.apache.org/) or
-[Azkaban](https://azkaban.github.io/).
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of contents**
 
-Workflows are expected to be mostly static or slowly changing. You can think
-of the structure of the tasks in your workflow as slightly more dynamic
-than a database structure would be. Airflow workflows are expected to look
-similar from a run to the next, this allows for clarity around
-unit of work and continuity.
+- [Project Focus](#project-focus)
+- [Principles](#principles)
+- [Requirements](#requirements)
+- [Support for Python versions](#support-for-python-versions)
+- [Getting started](#getting-started)
+- [Installing from PyPI](#installing-from-pypi)
+- [Official source code](#official-source-code)
+- [Convenience packages](#convenience-packages)
+- [User Interface](#user-interface)
+- [Contributing](#contributing)
+- [Who uses Apache Airflow?](#who-uses-apache-airflow)
+- [Who Maintains Apache Airflow?](#who-maintains-apache-airflow)
+- [Can I use the Apache Airflow logo in my presentation?](#can-i-use-the-apache-airflow-logo-in-my-presentation)
+- [Airflow merchandise](#airflow-merchandise)
+- [Links](#links)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## Project Focus
+
+Airflow works best with workflows that are mostly static and slowly changing. When DAG structure is similar from one run to the next, it allows for clarity around unit of work and continuity. Other similar projects include [Luigi](https://github.com/spotify/luigi), [Oozie](https://oozie.apache.org/) and [Azkaban](https://azkaban.github.io/).
+
+Airflow is commonly used to process data, but has the opinion that tasks should ideally be idempotent (i.e. results of the task will be the same, and will not create duplicated data in a destination system), and should not pass large quantities of data from one task to the next (though tasks can pass metadata using Airflow's [Xcom feature](https://airflow.apache.org/docs/stable/concepts.html#xcoms)). For high-volume, data-intensive tasks, a best practice is to delegate to external services that specialize on that type of work.
+
+Airflow is not a streaming solution, but it is often used to process real-time data, pulling data off streams in batches.
 
 ## Principles
 
 - **Dynamic**:  Airflow pipelines are configuration as code (Python), allowing for dynamic pipeline generation. This allows for writing code that instantiates pipelines dynamically.
 - **Extensible**:  Easily define your own operators, executors and extend the library so that it fits the level of abstraction that suits your environment.
 - **Elegant**:  Airflow pipelines are lean and explicit. Parameterizing your scripts is built into the core of Airflow using the powerful **Jinja** templating engine.
-- **Scalable**:  Airflow has a modular architecture and uses a message queue to orchestrate an arbitrary number of workers. Airflow is ready to scale to infinity.
+- **Scalable**:  Airflow has a modular architecture and uses a message queue to orchestrate an arbitrary number of workers.
+
+## Requirements
+
+Apache Airflow is tested with:
+
+|              | Master version (dev)      | Stable version (2.0.0)   | Previous version (1.10.14) |
+| ------------ | ------------------------- | ------------------------ | -------------------------  |
+| Python       | 3.6, 3.7, 3.8             | 3.6, 3.7, 3.8            | 2.7, 3.5, 3.6, 3.7, 3.8    |
+| PostgreSQL   | 9.6, 10, 11, 12, 13       | 9.6, 10, 11, 12, 13      | 9.6, 10, 11, 12, 13        |
+| MySQL        | 5.7, 8                    | 5.7, 8                   | 5.6, 5.7                   |
+| SQLite       | 3.15.0+                   | 3.15.0+                  | 3.15.0+                    |
+| Kubernetes   | 1.16.9, 1.17.5, 1.18.6    | 1.16.9, 1.17.5, 1.18.6   | 1.16.9, 1.17.5, 1.18.6     |
+
+**Note:** MySQL 5.x versions are unable to or have limitations with
+running multiple schedulers -- please see the "Scheduler" docs. MariaDB is not tested/recommended.
+
+**Note:** SQLite is used in Airflow tests. Do not use it in production. We recommend
+using the latest stable version of SQLite for local development.
+
+## Support for Python versions
+
+As of Airflow 2.0 we agreed to certain rules we follow for Python support. They are based on the official
+release schedule of Python, nicely summarized in the
+[Python Developer's Guide](https://devguide.python.org/#status-of-python-branches)
+
+1. We finish support for python versions when they reach EOL (For python 3.6 it means that we will remove it
+   from being supported on 23.12.2021).
+
+2. The "oldest" supported version of Python is the default one. "Default" is only meaningful in terms of
+   "smoke tests" in CI PRs which are run using this default version.
+
+3. We support a new version of Python after it is officially released, as soon as we manage to make
+   it works in our CI pipeline (which might not be immediate) and release a new version of Airflow
+   (non-Patch version) based on this CI set-up.
+
+### Additional notes on Python version requirements
+
+* Previous version [requires](https://github.com/apache/airflow/issues/8162) at least Python 3.5.3
+  when using Python 3
+
+## Getting started
+
+Visit the official Airflow website documentation (latest **stable** release) for help with [installing Airflow](https://airflow.apache.org/installation.html), [getting started](https://airflow.apache.org/start.html), or walking through a more complete [tutorial](https://airflow.apache.org/tutorial.html).
+
+> Note: If you're looking for documentation for master branch (latest development branch): you can find it on [s.apache.org/airflow-docs](https://s.apache.org/airflow-docs/).
+
+For more information on Airflow's Roadmap or Airflow Improvement Proposals (AIPs), visit the [Airflow Wiki](https://cwiki.apache.org/confluence/display/AIRFLOW/Airflow+Home).
+
+Official Docker (container) images for Apache Airflow are described in [IMAGES.rst](IMAGES.rst).
+
+## Installing from PyPI
+
+We publish Apache Airflow as `apache-airflow` package in PyPI. Installing it however might be sometimes tricky
+because Airflow is a bit of both a library and application. Libraries usually keep their dependencies open and
+applications usually pin them, but we should do neither and both at the same time. We decided to keep
+our dependencies as open as possible (in `setup.py`) so users can install different versions of libraries
+if needed. This means that from time to time plain `pip install apache-airflow` will not work or will
+produce unusable Airflow installation.
+
+In order to have repeatable installation, however, introduced in **Airflow 1.10.10** and updated in
+**Airflow 1.10.12** we also keep a set of "known-to-be-working" constraint files in the
+orphan `constraints-master`, `constraints-2-0` and `constraints-1-10` branches. We keep those "known-to-be-working"
+constraints files separately per major/minor python version.
+You can use them as constraint files when installing Airflow from PyPI. Note that you have to specify
+correct Airflow tag/version/branch and python versions in the URL.
+
+
+1. Installing just Airflow:
+
+NOTE!!!
+
+On November 2020, new version of PIP (20.3) has been released with a new, 2020 resolver. This resolver
+might work with Apache Airflow as of 20.3.3, but it might lead to errors in installation. It might
+depend on your choice of extras. In order to install Airflow reliably, you might need to either downgrade
+pip to version 20.2.4 `pip install --upgrade pip==20.2.4` or, in case you use Pip 20.3,
+you might need to add option] `--use-deprecated legacy-resolver` to your pip install command.
+While `pip 20.3.3` solved most of the `teething` problems of 20.3, this note will remain here until we
+set `pip 20.3` as official version in our CI pipeline where we are testing the installation as well.
+Due to those constraints, only `pip` installation is currently officially supported.
+
+While they are some successes with using other tools like [poetry](https://python-poetry.org) or
+[pip-tools](https://pypi.org/project/pip-tools), they do not share the same workflow as
+`pip` - especially when it comes to constraint vs. requirements management.
+Installing via `Poetry` or `pip-tools` is not currently supported.
+
+If you wish to install airflow using those tools you should use the constraint files and convert
+them to appropriate format and workflow that your tool requires.
+
+
+```bash
+pip install apache-airflow==2.0.0 \
+ --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.0.0/constraints-3.7.txt"
+```
+
+2. Installing with extras (for example postgres,google)
+
+```bash
+pip install apache-airflow[postgres,google]==2.0.0 \
+ --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.0.0/constraints-3.7.txt"
+```
+
+For information on installing backport providers check [backport-providers.rst](docs/apache-airflow/backport-providers.rst).
+
+## Official source code
+
+Apache Airflow is an [Apache Software Foundation](http://www.apache.org) (ASF) project,
+and our official source code releases:
+
+- Follow the [ASF Release Policy](http://www.apache.org/legal/release-policy.html)
+- Can be downloaded from [the ASF Distribution Directory](https://downloads.apache.org/airflow)
+- Are cryptographically signed by the release manager
+- Are officially voted on by the PMC members during the
+  [Release Approval Process](http://www.apache.org/legal/release-policy.html#release-approval)
+
+Following the ASF rules, the source packages released must be sufficient for a user to build and test the
+release provided they have access to the appropriate platform and tools.
+
+## Convenience packages
+
+There are other ways of installing and using Airflow. Those are "convenience" methods - they are
+not "official releases" as stated by the `ASF Release Policy`, but they can be used by the users
+who do not want to build the software themselves.
+
+Those are - in the order of most common ways people install Airflow:
+
+- [PyPI releases](https://pypi.org/project/apache-airflow/) to install Airflow using standard `pip` tool
+- [Docker Images](https://hub.docker.com/r/apache/airflow) to install airflow via
+  `docker` tool, use them in Kubernetes, Helm Charts, `docker-compose`, `docker swarm` etc. You can
+  read more about using, customising, and extending the images in the
+  [Latest docs](https://airflow.apache.org/docs/apache-airflow/stable/production-deployment.html), and
+  learn details on the internals in the [IMAGES.rst](IMAGES.rst) document.
+- [Tags in GitHub](https://github.com/apache/airflow/tags) to retrieve the git project sources that
+  were used to generate official source packages via git
+
+All those artifacts are not official releases, but they are prepared using officially released sources.
+Some of those artifacts are "development" or "pre-release" ones, and they are clearly marked as such
+following the ASF Policy.
 
 ## User Interface
 
 - **DAGs**: Overview of all DAGs in your environment.
-![](/docs/img/dags.png)
+
+  ![DAGs](/docs/apache-airflow/img/dags.png)
 
 - **Tree View**: Tree representation of a DAG that spans across time.
-![](/docs/img/tree.png)
+
+  ![Tree View](/docs/apache-airflow/img/tree.png)
 
 - **Graph View**: Visualization of a DAG's dependencies and their current status for a specific run.
-![](/docs/img/graph.png)
+
+  ![Graph View](/docs/apache-airflow/img/graph.png)
 
 - **Task Duration**: Total time spent on different tasks over time.
-![](/docs/img/duration.png)
+
+  ![Task Duration](/docs/apache-airflow/img/duration.png)
 
 - **Gantt View**: Duration and overlap of a DAG.
-![](/docs/img/gantt.png)
+
+  ![Gantt View](/docs/apache-airflow/img/gantt.png)
 
 - **Code View**:  Quick way to view source code of a DAG.
-![](/docs/img/code.png)
 
-## Who uses Airflow?
+  ![Code View](/docs/apache-airflow/img/code.png)
 
-As the Airflow community grows, we'd like to keep track of who is using
-the platform. Please send a PR with your company name and @githubhandle
-if you may.
 
-Committers:
+## Contributing
 
-* Refer to [Committers](https://cwiki.apache.org/confluence/display/AIRFLOW/Committers)
+Want to help build Apache Airflow? Check out our [contributing documentation](https://github.com/apache/airflow/blob/master/CONTRIBUTING.rst).
 
-Currently **officially** using Airflow:
+## Who uses Apache Airflow?
 
-1. [Airbnb](http://airbnb.io/) [[@mistercrunch](https://github.com/mistercrunch), [@artwr](https://github.com/artwr)]
-1. [Agari](https://github.com/agaridata) [[@r39132](https://github.com/r39132)]
-1. [allegro.pl](http://allegro.tech/) [[@kretes](https://github.com/kretes)]
-1. [AltX](https://www.getaltx.com/about) [[@pedromduarte](https://github.com/pedromduarte)]
-1. [Apigee](https://apigee.com) [[@btallman](https://github.com/btallman)]
-1. [Astronomer](http://www.astronomer.io) [[@schnie](https://github.com/schnie)]
-1. [Auth0](https://auth0.com) [[@sicarul](https://github.com/sicarul)]
-1. [BandwidthX](http://www.bandwidthx.com) [[@dineshdsharma](https://github.com/dineshdsharma)]
-1. [Bellhops](https://github.com/bellhops)
-1. [BlaBlaCar](https://www.blablacar.com) [[@puckel](https://github.com/puckel) & [@wmorin](https://github.com/wmorin)]
-1. [Bloc](https://www.bloc.io) [[@dpaola2](https://github.com/dpaola2)]
-1. BlueApron [[@jasonjho](https://github.com/jasonjho) & [@matthewdavidhauser](https://github.com/matthewdavidhauser)]
-1. [Blue Yonder](http://www.blue-yonder.com) [[@blue-yonder](https://github.com/blue-yonder)]
-1. [Celect](http://www.celect.com) [[@superdosh](https://github.com/superdosh) & [@chadcelect](https://github.com/chadcelect)]
-1. [Change.org](https://www.change.org) [[@change](https://github.com/change), [@vijaykramesh](https://github.com/vijaykramesh)]
-1. [Children's Hospital of Philadelphia Division of Genomic Diagnostics](http://www.chop.edu/centers-programs/division-genomic-diagnostics) [[@genomics-geek]](https://github.com/genomics-geek/)
-1. [City of San Diego](http://sandiego.gov) [[@MrMaksimize](https://github.com/mrmaksimize), [@andrell81](https://github.com/andrell81) & [@arnaudvedy](https://github.com/arnaudvedy)]
-1. [Clairvoyant](https://clairvoyantsoft.com) [@shekharv](https://github.com/shekharv)
-1. [Clover Health](https://www.cloverhealth.com) [[@gwax](https://github.com/gwax) & [@vansivallab](https://github.com/vansivallab)]
-1. Chartboost [[@cgelman](https://github.com/cgelman) & [@dclubb](https://github.com/dclubb)]
-1. [Cotap](https://github.com/cotap/) [[@maraca](https://github.com/maraca) & [@richardchew](https://github.com/richardchew)]
-1. [Digital First Media](http://www.digitalfirstmedia.com/) [[@duffn](https://github.com/duffn) & [@mschmo](https://github.com/mschmo) & [@seanmuth](https://github.com/seanmuth)]
-1. [Easy Taxi](http://www.easytaxi.com/) [[@caique-lima](https://github.com/caique-lima) & [@WesleyBatista](https://github.com/WesleyBatista)]
-1. [FreshBooks](https://github.com/freshbooks) [[@DinoCow](https://github.com/DinoCow)]
-1. [Gentner Lab](http://github.com/gentnerlab) [[@neuromusic](https://github.com/neuromusic)]
-1. [Glassdoor](https://github.com/Glassdoor) [[@syvineckruyk](https://github.com/syvineckruyk)]
-1. [GovTech GDS](https://gds-gov.tech) [[@chrissng](https://github.com/chrissng) & [@datagovsg](https://github.com/datagovsg)]
-1. [Groupalia](http://es.groupalia.com) [[@jesusfcr](https://github.com/jesusfcr)]
-1. [Gusto](https://gusto.com) [[@frankhsu](https://github.com/frankhsu)]
-1. [Handshake](https://joinhandshake.com/) [[@mhickman](https://github.com/mhickman)]
-1. [Handy](http://www.handy.com/careers/73115?gh_jid=73115&gh_src=o5qcxn) [[@marcintustin](https://github.com/marcintustin) / [@mtustin-handy](https://github.com/mtustin-handy)]
-1. [HBO](http://www.hbo.com/)[[@yiwang](https://github.com/yiwang)]
-1. [HelloFresh](https://www.hellofresh.com) [[@tammymendt](https://github.com/tammymendt) & [@davidsbatista](https://github.com/davidsbatista) & [@iuriinedostup](https://github.com/iuriinedostup)]
-1. [Holimetrix](http://holimetrix.com/) [[@thibault-ketterer](https://github.com/thibault-ketterer)]
-1. [Hootsuite](https://github.com/hootsuite)
-1. [IFTTT](https://www.ifttt.com/) [[@apurvajoshi](https://github.com/apurvajoshi)]
-1. [iHeartRadio](http://www.iheart.com/)[[@yiwang](https://github.com/yiwang)]
-1. [ING](http://www.ing.com/)
-1. [Jampp](https://github.com/jampp)
-1. [Kiwi.com](https://kiwi.com/) [[@underyx](https://github.com/underyx)]
-1. [Kogan.com](https://github.com/kogan) [[@geeknam](https://github.com/geeknam)]
-1. [Lemann Foundation](http://fundacaolemann.org.br) [[@fernandosjp](https://github.com/fernandosjp)]
-1. [LendUp](https://www.lendup.com/) [[@lendup](https://github.com/lendup)]
-1. [Letsbonus](http://www.letsbonus.com) [[@jesusfcr](https://github.com/jesusfcr)]
-1. [liligo](http://liligo.com/) [[@tromika](https://github.com/tromika)]
-1. [LingoChamp](http://www.liulishuo.com/) [[@haitaoyao](https://github.com/haitaoyao)]
-1. [Lucid](http://luc.id) [[@jbrownlucid](https://github.com/jbrownlucid) & [@kkourtchikov](https://github.com/kkourtchikov)]
-1. [Lumos Labs](https://www.lumosity.com/) [[@rfroetscher](https://github.com/rfroetscher/) & [@zzztimbo](https://github.com/zzztimbo/)]
-1. [Lyft](https://www.lyft.com/)[[@SaurabhBajaj](https://github.com/SaurabhBajaj)]
-1. [Madrone](http://madroneco.com/) [[@mbreining](https://github.com/mbreining) & [@scotthb](https://github.com/scotthb)]
-1. [Markovian](https://markovian.com/) [[@al-xv](https://github.com/al-xv), [@skogsbaeck](https://github.com/skogsbaeck), [@waltherg](https://github.com/waltherg)]
-1. [Mercadoni](https://www.mercadoni.com.co) [[@demorenoc](https://github.com/demorenoc)]
-1. [MiNODES](https://www.minodes.com) [[@dice89](https://github.com/dice89), [@diazcelsa](https://github.com/diazcelsa)]
-1. [MFG Labs](https://github.com/MfgLabs)
-1. [mytaxi](https://mytaxi.com) [[@mytaxi](https://github.com/mytaxi)]
-1. [Nerdwallet](https://www.nerdwallet.com)
-1. [OfferUp](https://offerupnow.com)
-1. [OneFineStay](https://www.onefinestay.com) [[@slangwald](https://github.com/slangwald)]
-1. [Open Knowledge International](https://okfn.org) [@vitorbaptista](https://github.com/vitorbaptista)
-1. [PayPal](https://www.paypal.com/) [[@jhsenjaliya](https://github.com/jhsenjaliya)]
-1. [Postmates](http://www.postmates.com) [[@syeoryn](https://github.com/syeoryn)]
-1. [Qubole](https://qubole.com) [[@msumit](https://github.com/msumit)]
-1. [Scaleway](https://scaleway.com) [[@kdeldycke](https://github.com/kdeldycke)]
-1. [Sense360](https://github.com/Sense360) [[@kamilmroczek](https://github.com/KamilMroczek)]
-1. [Shopkick](https://shopkick.com/) [[@shopkick](https://github.com/shopkick)]
-1. [Sidecar](https://hello.getsidecar.com/) [[@getsidecar](https://github.com/getsidecar)]
-1. [SimilarWeb](https://www.similarweb.com/) [[@similarweb](https://github.com/similarweb)]
-1. [SmartNews](https://www.smartnews.com/) [[@takus](https://github.com/takus)]
-1. [Spotify](https://github.com/spotify) [[@znichols](https://github.com/znichols)]
-1. [Stackspace](https://beta.stackspace.io/)
-1. Stripe [[@jbalogh](https://github.com/jbalogh)]
-1. [Thumbtack](https://www.thumbtack.com/) [[@natekupp](https://github.com/natekupp)]
-1. [T2 Systems](http://t2systems.com) [[@unclaimedpants](https://github.com/unclaimedpants)]
-1. [Vente-Exclusive.com](http://www.vente-exclusive.com/) [[@alexvanboxel](https://github.com/alexvanboxel)]
-1. [Vnomics](https://github.com/vnomics) [[@lpalum](https://github.com/lpalum)]
-1. [WePay](http://www.wepay.com) [[@criccomini](https://github.com/criccomini) & [@mtagle](https://github.com/mtagle)]
-1. [WeTransfer](https://github.com/WeTransfer) [[@jochem](https://github.com/jochem)]
-1. [Whistle Labs](http://www.whistle.com) [[@ananya77041](https://github.com/ananya77041)]
-1. [WiseBanyan](https://wisebanyan.com/)
-1. Wooga
-1. Xoom [[@gepser](https://github.com/gepser) & [@omarvides](https://github.com/omarvides)]
-1. Yahoo!
-1. [Zapier](https://www.zapier.com) [[@drknexus](https://github.com/drknexus) & [@statwonk](https://github.com/statwonk)]
-1. [Zendesk](https://www.github.com/zendesk)
-1. [Zenly](https://zen.ly) [[@cerisier](https://github.com/cerisier) & [@jbdalido](https://github.com/jbdalido)]
-1. [99](https://99taxis.com) [[@fbenevides](https://github.com/fbenevides), [@gustavoamigo](https://github.com/gustavoamigo) & [@mmmaia](https://github.com/mmmaia)]
+More than 350 organizations are using Apache Airflow [in the wild](https://github.com/apache/airflow/blob/master/INTHEWILD.md).
+
+## Who Maintains Apache Airflow?
+
+Airflow is the work of the [community](https://github.com/apache/airflow/graphs/contributors),
+but the [core committers/maintainers](https://people.apache.org/committers-by-project.html#airflow)
+are responsible for reviewing and merging PRs as well as steering conversation around new feature requests.
+If you would like to become a maintainer, please review the Apache Airflow
+[committer requirements](https://github.com/apache/airflow/blob/master/CONTRIBUTING.rst#guidelines-to-become-an-airflow-committer).
+
+## Can I use the Apache Airflow logo in my presentation?
+
+Yes! Be sure to abide by the Apache Foundation [trademark policies](https://www.apache.org/foundation/marks/#books) and the Apache Airflow [Brandbook](https://cwiki.apache.org/confluence/display/AIRFLOW/Brandbook). The most up to date logos are found in [this repo](/docs/apache-airflow/img/logos) and on the Apache Software Foundation [website](https://www.apache.org/logos/about.html).
+
+## Airflow merchandise
+
+If you would love to have Apache Airflow stickers, t-shirt etc. then check out
+[Redbubble Shop](https://www.redbubble.com/i/sticker/Apache-Airflow-by-comdev/40497530.EJUG5).
 
 ## Links
 
-
-* [Documentation](http://airflow.incubator.apache.org/)
-* [Chat](https://gitter.im/apache/incubator-airflow)
-* [Apache Airflow Incubation Status](http://incubator.apache.org/projects/airflow.html)
-* [More](https://cwiki.apache.org/confluence/display/AIRFLOW/Airflow+Links)
+- [Documentation](https://airflow.apache.org/docs/stable/)
+- [Chat](https://s.apache.org/airflow-slack)
